@@ -1,0 +1,75 @@
+x,y,checkin_id,name,category
+0,67,1,Wrightiraptor Mountain,Thrill Rides
+6,43,2,Galactosaurus Rage,Thrill Rides
+16,49,3,Auvilotops Express,Thrill Rides
+16,66,4,TerrorSaur,Thrill Rides
+17,43,5,Wendisaurus Chase,Thrill Rides
+17,67,6,Keimosaurus Big Spin,Thrill Rides
+23,54,7,Firefall,Thrill Rides
+26,59,8,Atmosfear,Thrill Rides
+27,15,9,North Line,Kiddie Rides
+28,66,10,Jeredactyl Jump,Kiddie Rides
+32,33,11,Sauroma Bumpers,Kiddie Rides
+34,68,12,Flying TyrAndrienkos,Kiddie Rides
+38,90,13,Cyndisaurus Asteroid,Kiddie Rides
+42,37,14,Beelzebufo,Kiddie Rides
+43,56,15,Enchanted Toadstools,Kiddie Rides
+43,78,16,Stegocycles,Kiddie Rides
+45,24,17,Blue Iguanodon,Kiddie Rides
+47,11,18,Wild Jungle Cruise,Kiddie Rides
+48,87,19,Stone Cups,Kiddie Rides
+50,57,20,Scholtz Express,Rides for Everyone
+60,37,21,Paleocarrie Carousel,Rides for Everyone
+63,99,22,Jurassic Road,Rides for Everyone
+67,37,23,Rhynasaurus Rampage,Rides for Everyone
+69,44,24,Kaufs Lost Canyon Escape,Rides for Everyone
+73,79,25,Maiasaur Madness,Rides for Everyone
+73,84,26,Kristanodon Kaper,Rides for Everyone
+76,22,27,Squidosaur,Rides for Everyone
+76,88,28,Eberlesaurus Roundup,Rides for Everyone
+78,37,29,Dykesadactyl Thrill,Rides for Everyone
+78,48,30,Ichthyoroberts Rapids,Rides for Everyone
+79,87,31,Raptor Race,Rides for Everyone
+79,89,32,Creighton Pavilion,Shows & Entertainment
+81,77,33,Alvarez Beer Garden,Beer Gardens
+82,80,34,Mary Anning Beer Garden,Beer Gardens
+83,88,35,Theresaur Food Stop,Food
+85,86,36,Paleo Shreckwiches,Food
+86,44,37,Krystal Cook Cafe,Food
+87,48,38,Shilobite &Pizza,Food
+87,63,39,Chensational Sweets,Food
+87,81,40,Munzasaurus Souvenirs,Shopping
+92,81,41,Laskonasaur Store,Shopping
+99,77,42,World of WarRocks Shop,Shopping
+NA,NA,81,Flight of the Swingodon,Thrill Rides
+NA,NA,53,Smoky Wood BBQ,Food
+NA,NA,54,ice Age Cones,Food
+NA,NA,55,Plaisantly Popped Corn,Food
+NA,NA,56,Floral Funnels,Food
+NA,NA,57,Permafrosties,Food
+NA,NA,58,Granite Slab Pizza,Food
+NA,NA,59,EberTrex Fries,Food
+NA,NA,63,Grinosaurus Stage,Shows & Entertainment
+NA,NA,64,SabreTooth Theatre,Shows & Entertainment
+NA,NA,61,Primal Carnage Arcade,Shows & Entertainment
+NA,NA,49,Raptor Restroom,Restrooms
+NA,NA,50,Tar Pit Stop,Restrooms
+NA,NA,51,LavaTory,Restrooms
+NA,NA,52,TriceraStop,Restrooms
+NA,NA,65,Darwin's Stop,Restrooms
+NA,NA,66,Tyrannosaurus Rest,Restrooms
+NA,NA,67,Fisching Rooms,Restrooms
+NA,NA,43,Whitley's Plushadactyl,Shopping
+NA,NA,44,Staskosaurus Designs,Shopping
+NA,NA,45,Dino Chic Clothing,Shopping
+NA,NA,46,Petroglyph Body Art,Shopping
+NA,NA,47,League of Legenodons,Shopping
+NA,NA,48,The Magic Cavern,Shopping
+NA,NA,60,Daily Slab Maps and Info,Information & Assistance
+NA,NA,62,Liggement Fix-Me-Up,Information & Assistance
+NA,NA,EN,Entrance North,Entrance
+NA,NA,EW,Entrance West,Entrance
+NA,NA,EE,Entrance East,Entrance
+NA,NA,30a,Watching Rapids I,Other
+NA,NA,30b,Watching Rapids II,Other
+NA,NA,30c,Watching Rapids III,Other
