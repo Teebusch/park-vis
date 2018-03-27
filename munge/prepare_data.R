@@ -4,7 +4,7 @@
 library(tidyverse)
 library(lubridate)
 
-source("helpers.R")
+source("munge/helpers.R")
 
 # Load the data ---------------------------------------------------------------
 
@@ -31,9 +31,7 @@ rm(fri, sat, sun)
 
 head(df)
 
-
 # Add some columns that can be useful -----------------------------------------
-
 # Add proper location ids (matching those on the map). 
 # See match_location_ids.R for more info
 locations <- read_rds("data/checkin_locs.RDS")
@@ -45,11 +43,12 @@ df <- df %>%
               mutate(type = "check-in"), # in case there's same xy as movement 
             by = c("type", "x", "y"))
 
+
 # hour: time of day as numeric, e.g. 1.30pm = 13.5
 # visit_time: how long (minutes) since we first saw the visitor (i.e. since she 
 # entered the park)?
 # checkin_nr: order of the check-ins for each visitor (1st check-in, 
-# 2nd check-in...)
+# 2nd check-in..., nth check-in)
 # movement_nr: order of the movements for each visitor (moving between 1st and 
 # 2nd check-in, between 2nd and 3rd check-in,..., between nth and n+1th check-in
 df <- df %>%

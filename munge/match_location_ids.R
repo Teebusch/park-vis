@@ -1,6 +1,10 @@
 # add correct id for each check-in location
 # Real and temporary ids were matched manually outside of R. 
 # This code need not be run again - just read in checkin_locs.RDS
+# 
+# TODO: Some of the locations on the map cannot be checked into (shopping, food,
+# toilets.) It is a bit more difficult to define when a visitor is `in` one of
+# these. Maybe later...
 
 checkin_locs <- df %>%
   filter(type == "check-in") %>%
