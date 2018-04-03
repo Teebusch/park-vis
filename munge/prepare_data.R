@@ -1,5 +1,5 @@
 # This will create park_data.RDS which is a data frame with the raw movement 
-# data, plus some additional useful columns. It does not need to be run again afterwards. Just do `df <- read_rds("park_data.RDS")`
+# data, plus some additional useful columns. It does not need to be run again afterwards. Just do `df <- read_rds("data/park_data.RDS")`
 
 library(tidyverse)
 library(lubridate)
@@ -50,7 +50,7 @@ df <- df %>%
 # checkin_nr: order of the check-ins for each visitor (1st check-in, 
 # 2nd check-in..., nth check-in)
 # movement_nr: order of the movements for each visitor (moving between 1st and 
-# 2nd check-in, between 2nd and 3rd check-in,..., between nth and n+1th check-in
+# 2nd check-in, between 2nd and 3rd check-in,..., between n-1th and nth check-in
 df <- df %>%
   group_by(day, id) %>%
   arrange(timestamp) %>%

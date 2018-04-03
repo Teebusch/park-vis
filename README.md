@@ -8,7 +8,7 @@
   
 ## What did I compute?
 
-### True location Ids and meta information
+### Location Ids and meta information
 I made a table with the real location IDs (i.e. the same as on the map) for each check-in location, as well as the corresponding meta-information (name of the ride, category of ride). The table can be found in `data/checkin_locs.RDS` (and `checkin_locs.csv` for non-R users). 
 The correct ids have also already been added to `park_data.RDS`. The name and category can easily be added with `dplyr::left_join()`.
 See `munge/match_location_ids.R` for infos on how I did it (it involved some manual work -- yikes!)
@@ -17,6 +17,9 @@ See `munge/match_location_ids.R` for infos on how I did it (it involved some man
 I made a distance matrix for shortest walking distances between all check-in locations. That is, how many tiles does a visitor _at least_ need to cross to get from **A** to **B**? 
 
 See `munge/get_location_distances.R` for the script and `data/loc_distances.RDS` for the matrix. 
+
+### Data Frame of checkins
+When running `munge/make_checkin_df.R`, a data frame is created as `data/checkins.RDS`. It contains all checkins, with timestamps for checking in and out, the duration of the stay, the ride id, name and type, the transitional probability (the probability of going to this location, given the previous one), and some oher things. See `munge/make_checkin_df.R` for details.
 
 ### Some other variables
 In `prepare_data.R` I've added a few other variables that might come in handy to `park_data.RDS`:
@@ -27,7 +30,7 @@ entered the park)?
   + **checkin_nr:** order of the check-ins for each visitor (1st check-in, 
 2nd check-in..., nth check-in)
   + **movement_nr:** order of the movements for each visitor (moving between 1st and 
-2nd check-in, between 2nd and 3rd check-in,..., between nth and n+1th check-in
+2nd check-in, between 2nd and 3rd check-in,..., between n-1th and nth check-in
 
   
 
