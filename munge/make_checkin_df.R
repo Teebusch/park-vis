@@ -46,13 +46,13 @@ tps <- checkins %>%
 
 # add missing transitions and scaled probabilities
 tps <- full_join(tps, expand(tps, checkin_id, prev_checkin_id)) %>%
-  mutate(n = coalesce(0), p = coalesce(0)) %>%
+  mutate(n = coalesce(n, as.integer(0)), p = coalesce(p, 0)) %>%
   group_by(checkin_id) %>%
   mutate(p_scaled = (p - min(p)) / (max(p) - min(p)))
 
 
 checkins <- left_join(checkins, select(tps, -n))
 
-head(checkins)
+glimpse(checkins)
 
 write_rds(checkins, "data/checkins.RDS", compress = "gz")
