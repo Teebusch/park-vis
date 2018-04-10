@@ -26,3 +26,7 @@ vignettes/*.pdf
 plots/*
 data/G0R72A/*
 data/park_data.RDS
+data/checkins.RDS
+data/timebins.RDS
+README.html
+*.nb.html

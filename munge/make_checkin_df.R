@@ -51,6 +51,8 @@ tps <- full_join(tps, expand(tps, checkin_id, prev_checkin_id)) %>%
   mutate(p_scaled = (p - min(p)) / (max(p) - min(p)))
 
 
+tps %>% View()
+
 checkins <- left_join(checkins, select(tps, -n))
 
 glimpse(checkins)

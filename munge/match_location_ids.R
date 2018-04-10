@@ -6,6 +6,8 @@
 # toilets.) It is a bit more difficult to define when a visitor is `in` one of
 # these. Maybe later...
 
+df <- read_rds("data/park_data.RDS")
+
 checkin_locs <- df %>%
   filter(type == "check-in") %>%
   select(x, y) %>%
@@ -17,8 +19,8 @@ ggplot(checkin_locs, aes(x, y, label = temp_id)) +
   geom_text() +
   coord_equal(expand = TRUE) +
   theme_void()
-ggsave("plots/ids.svg", height = 5, width = 5)
 
+ggsave("plots/ids.svg", height = 5, width = 5)
 write_csv(checkin_locs, "data/temp_ids.csv")
 
 # ...
@@ -28,14 +30,27 @@ write_csv(checkin_locs, "data/temp_ids.csv")
 # graphic software (Affinity Designer)
 # ...
 
-id_dict <- read_csv("data/location_ids.csv")
+locs <- read_csv("data/checkin_locs.csv") 
 
-checkin_locs <- checkin_locs %>%
-  mutate(checkin_id = as.character(temp_id)) %>%
-  full_join(id_dict, by = "checkin_id")  %>%
-  select(-temp_id)
+# Test
+library(ggrepel)
 
-saveRDS(checkin_locs, file = "data/checkin_locs.RDS")
+ggplot(locs, aes(x, y)) +
+  geom_point(size = 3, aes(color = category)) +
+  geom_label_repel(
+    aes(label = checkin_id, fill = category),
+    color = 'white',
+    box.padding = 0.2, 
+    point.padding = 0.1,
+    segment.color = 'black'
+  ) +
+  coord_equal()
 
-write_csv(checkin_locs, "data/checkin_locs.csv") 
-# ...as a service for people who don't like R :P
+ggsave("data/G0R72A/additional-files/locs.png", type = "cairo-png")
+write_rds(locs, "data/checkin_locs.RDS")
+
+
+
+
+
+
