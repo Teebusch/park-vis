@@ -19,18 +19,25 @@ df_plot <- df %>%
   )
 
 p <- df_plot %>%
+  #mutate(
+  #   name = fct_collapse(name, 
+  #                       Entrances = c("Entrance North", "Entrance West", "Entrance East"),
+  #                       `Watching Rapids` = c("Watching Rapids I", "Watching Rapids II", "Watching Rapids III")
+  #                       )
+  # ) %>% 
+  filter(checkin_id == 10) %>%
   ggplot(aes(x, y, xend = xend, yend = yend, color = duration)) +
   geom_curve(alpha =.1) +
-  # geom_rect(aes(xmin = start, xmax = end, ymin = 0, ymax = n_checkedin/1000), 
-  #           inherit.aes = F, fill = "black", color = "white", alpha = .5,
-  #           data = filter(df_timebins, checkin_id == 34, day == "Sunday")) +
-  # geom_rect(aes(xmin = start, xmax = end, ymin = -median_duration/20, ymax = 0, fill = median_duration), 
-  #           inherit.aes = F, color = "white", alpha = .5,
-  #           data = filter(df_timebins, checkin_id == 34, day == "Sunday")) +
-  geom_point(aes(x = start, y = 0, size = n_checkedin, color = median_duration), inherit.aes = F,
-             data = filter(df_timebins, day == "Friday")) +
+  geom_rect(aes(xmin = start, xmax = end, ymin = 0, ymax = n_checkedin/200),
+            inherit.aes = F, fill = "black", color = NA, alpha = .5,
+            data = filter(df_timebins, checkin_id == 10, day == "Friday")) +
+  geom_rect(aes(xmin = start, xmax = end, ymin = -median_duration/40, ymax = 0, fill = median_duration),
+            inherit.aes = F, color = NA, alpha = .8,
+            data = filter(df_timebins, checkin_id == 10, day == "Friday"), show.legend = FALSE) +
+  # geom_point(aes(x = start, y = 0, size = n_checkedin, color = median_duration), inherit.aes = F,
+  #            data = filter(df_timebins, day == "Friday")) +
   scale_y_continuous(expand = c(.3, .3)) +
-  scale_fill_viridis(option = "A") +
+  scale_fill_viridis(option = "A", direction = 1) +
   scale_color_viridis(option = "A") +
   facet_wrap(~ name) +
   theme_minimal() +
@@ -42,4 +49,7 @@ p <- df_plot %>%
 
 p
 
-ggsave(p, file="filename.png", type="cairo-png", dpi = 150, width = 15, height = 12, scale = 3)
+nrow(df_plot)
+
+ggsave(p, file="filename2.png", type="cairo-png", dpi = 150, width = 6, height = 6, scale = 2)
+ggsave(p, file="filename.png", type="cairo-png", dpi = 150, width = 10, height = 10, scale = 3)
