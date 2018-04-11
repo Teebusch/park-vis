@@ -66,3 +66,4 @@ df <- df %>%
 
 
 write_rds(df, "data/park_data.RDS", compress = "gz")
+

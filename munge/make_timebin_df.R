@@ -7,7 +7,6 @@ library(lubridate)
 df <- read_rds("data/checkins.RDS")
 checkin_ids <- sort(unique(df$checkin_id))
 
-
 # make data frame of time
 intvl <- "15 min"
 opening_hours <- range(hour(df$checkin))
@@ -26,7 +25,6 @@ df_timebins <- data.frame(
     hour(start) >= opening_hours[1],
     hour(end) <= opening_hours[2]
   )
-
 
 # get summaries for each interval (takes a while...)
 summarize_bin <- function(i, t1, t2) {
@@ -47,7 +45,6 @@ df_timebins <- df_timebins %>%
 
 df_timebins <- df_timebins %>%
   mutate(median_duration = coalesce(median_duration, 0))
-
 
 head(df_timebins)
 write_rds(df_timebins, "data/timebins.RDS") 

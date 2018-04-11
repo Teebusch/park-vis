@@ -32,12 +32,14 @@ p <- df_plot %>%
   scale_y_continuous(expand = c(.3, .3)) +
   scale_fill_viridis(option = "A") +
   scale_color_viridis(option = "A") +
-  facet_wrap(~ checkin_id) +
+  facet_wrap(~ name) +
   theme_minimal() +
   theme(panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank(),
         axis.text.y = element_blank(),
         legend.position = "bottom")
   
+
+p
 
 ggsave(p, file="filename.png", type="cairo-png", dpi = 150, width = 15, height = 12, scale = 3)
