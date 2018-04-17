@@ -11,12 +11,14 @@ locations <- read_rds("data/checkin_locs.RDS")
 
 # checkout: timestamp of next registered movement
 # duration: duration of stay
-# prev_checkin_id: The previous registered check-in location of that user
-# next_checkin_id: The next registered check-in location of that user
+# prev_checkin_id: The previous registered check-in location of that 
+#   visitor (0 if jsut entering park)
+# next_checkin_id: The next registered check-in location of that user 
+#  (99 if leaving park)
 checkins <- df %>%
   group_by(day, id) %>%
   #arrange(timestamp) %>% # not necessary, df is already sorted like this
-  mutate(checkout = lead(timestamp)) %>%
+  mutate(checkout = lead(timestamp, default = NA)) %>%
   filter(type == "check-in") %>%
   rename(checkin = timestamp) %>%
   mutate(duration = minutes_between(checkin, checkout)) %>% 
