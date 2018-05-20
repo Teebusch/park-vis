@@ -31,7 +31,9 @@ ui <- fluidPage(
         sliderInput("detailTimeWindow", 
                     "Show time window", 
                     min = 0, max = 1, 
-                    value = c(0,1))
+                    value = c(0,1)),
+        checkboxInput("filterThis", 
+                    "Filter connections", FALSE)
       ),
       
       mainPanel(
@@ -86,24 +88,22 @@ server <- function(input, output, session) {
    output$allLocsPlot <- renderPlot({
      df5 %>%
        filter(day == input$day) %>%
-       ggplot(aes(x, y, xend = xend, yend = yend, color = median_duration)) +
-         geom_curve(aes(alpha = n)) +
+       ggplot(aes(x, y, xend = x, yend = yend, color = median_duration)) +
+         geom_segment(aes(alpha = n)) +
          geom_rect(aes(xmin = x, xmax = x+minutes(15), 
                        ymin = 0, ymax = (n_checkedin/max(n_checkedin))*.7),
                    inherit.aes = F, fill = "black", color = NA, alpha = .5,
                    data = filter(df15, day == input$day)) +
          geom_rect(aes(xmin = x, xmax = x+minutes(15), 
-                       ymin = (median_duration/max(median_duration))*-.7, ymax = 0, fill = median_duration),
+                       ymin = (median_duration/max(median_duration))*-.7, 
+                       ymax = 0, fill = median_duration),
                    inherit.aes = F, color = NA, alpha = .8,
                    data = filter(df15, day == input$day), show.legend = FALSE) +
-         #geom_point(
-        #   data = filter(df15, day == input$day),
-        #  aes(x = x, y = y, size = n_checkedin, color = median_duration), inherit.aes = F) +
          facet_wrap(~ name) +
          scale_y_continuous(expand = c(.3, .3)) +
          scale_fill_viridis(option = "A") +
          scale_color_viridis(option = "A") +
-         #lims(color = range(df5$duration)) +
+         # lims(color = range(df5$duration)) +
          theme_minimal() +
          theme(panel.grid.major.y = element_blank(),
                panel.grid.minor.y = element_blank(),
@@ -126,7 +126,7 @@ server <- function(input, output, session) {
        filter(day == input$day, name == input$detailNameSelect)
      
      df_highlight <- filter(df_plot,
-                            (prev_checkin_id == selId | 
+                            input$filterThis == FALSE | (prev_checkin_id == selId | 
                               next_checkin_id == selId),
                             between(hour, minDate, maxDate)
                             )
@@ -138,11 +138,23 @@ server <- function(input, output, session) {
      df_plot %>%
        ggplot(aes(x, y, xend = xend, yend = yend, color = median_duration)) +
        geom_curve(alpha =.01, curvature = .1) +
-       geom_curve(alpha = .5, curvature = .1, data = df_highlight) +
-       geom_point(aes(x = x, y = y, size = n_checkedin, color = median_duration), 
+       geom_curve(alpha = .3, curvature = .1, data = df_highlight) +
+       geom_point(aes(x = x, y = y, size = n_checkedin, color = median_duration),
                   inherit.aes = F,
                   data = df_highlight,
                   color = "black") +
+       
+       # geom_rect(aes(xmin = x, xmax = x+minutes(2) + seconds(30), 
+       #               ymin = 0, ymax = (n_checkedin/max(n_checkedin))*.7),
+       #           inherit.aes = F, fill = "black", color = NA, alpha = .5,
+       #           data = filter(df15, day == input$day)) +
+       # geom_rect(aes(xmin = x, xmax = x+minutes(2) + seconds(30), 
+       #               ymin = (median_duration/max(median_duration))*-.7, 
+       #               ymax = 0, fill = median_duration),
+       #           inherit.aes = F, color = NA, alpha = .8,
+       #           data = filter(df15, day == input$day), show.legend = FALSE) +
+       
+       geom_point(aes(x = xend, y = yend, size = n_checkedin)) +
        geom_point(aes(x = x, y = 0, size = n_checkedin)) +
        scale_fill_viridis(option = "B") +
        scale_color_viridis(option = "B") +
@@ -150,7 +162,7 @@ server <- function(input, output, session) {
        theme(panel.grid.major.y = element_blank(),
              panel.grid.minor.y = element_blank(),
              axis.text.y = element_blank(),
-             legend.position = "bottom")
+             legend.position = "right")
    })
 }
 

@@ -1,0 +1,184 @@
+---
+title: "A Walk in the Park"
+output: 
+  html_notebook: 
+    fig_height: 5
+    fig_width: 7
+    highlight: tango
+    theme: flatly
+---
+
+
+```{r}
+#There is a visitor id, the type of activity (movement or check-in), a timestamp,
+#and x and y positions (in a 5x5 meter wide grid).Let's look at some simple stats 
+#for each day.
+df %>% 
+  group_by(day) %>%
+  summarize(
+    n_obs = n(),
+    n_visitors = length(unique(id)),
+    n_moves = sum(type == "movement", na.rm = TRUE),
+    n_checkins = sum(type == "check-in", na.rm = TRUE),
+    n_ids = length(unique(id)),
+    moves_pp = round(n_moves / n_ids, 1),
+    checkins_pp = round(n_checkins / n_ids, 1),
+    start = min(timestamp, na.rm = TRUE),
+    end = max(timestamp, na.rm = TRUE)
+  )
+```
+
+
+```{r}
+df2 %>% 
+  ggplot(aes(n, color = day)) +
+  geom_freqpoly(size = 1, bins = 20) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = "Number of Check-ins", y = "Frequency")
+
+ggsave("rides.png", height = 4)
+```
+
+```{r}
+df %>% filter(type == "check-in") %>% .$stay %>% summary()
+df %>% filter(type == "check-in") %>% .$stay %>% hist() %>% plot()
+```
+
+
+
+```{r}
+df3 <- df %>%
+  group_by(day, id) %>%
+  summarize(arrival = min(timestamp),
+            duration = minutes_between(min(timestamp), max(timestamp)))
+
+summary(df3$duration)
+```
+
+```{r}
+df3 %>% 
+  summarize(avg = mean(duration, na.rm = TRUE),
+            min = min(duration, na.rm = TRUE),
+            max = max(duration, na.rm = TRUE))
+```
+
+```{r}
+df %>% group_by(id) %>% 
+  summarize(min = min(hour, na.rm = T)) %>%
+  ungroup() %>%
+  ggplot(aes(min)) +
+  geom_histogram()
+```
+ 
+
+```{r}
+# sample 100 visitors
+smp_ids <- sample(unique(df$id), 500)
+```
+
+
+```{r}
+df_distinct <- df %>%
+  group_by(type, x, y) %>%
+  summarize(n = n(), sumtime = sum(stay, na.rm = TRUE)) %>%
+  ungroup()
+
+df_distinct %>%
+  group_by(type) %>%
+  mutate(n = (n-min(n)) / (max(n)-min(n))) %>%
+  filter(type == "check-in") %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(color = n, size = sqrt(n)), show.legend = FALSE) +
+  scale_color_distiller(type = "seq") +
+  coord_equal() +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "black"))
+
+df_distinct %>%
+  filter(type == "movement") %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(color = sqrt(n)), size = 1, show.legend = FALSE) +
+  scale_color_distiller(type = "seq", palette = 4) +
+  geom_point(aes(size =(sumtime/(2*pi))), color = "hotpink", pch = 1,
+    data = filter(df_distinct, type == "check-in"), show.legend = FALSE) +
+  coord_equal() +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "black"))
+
+ggsave("nactions.png", height = 4.4, width = 5, dpi = 600)
+
+```
+
+```{r}
+
+minmax <- function(x) {
+  (x - min(x)) / (max(x) - min(x))
+}
+
+df_hr <- df %>%
+  mutate(hour = hour %/% 2) %>%
+  group_by(type, day, hour, x, y) %>%
+  summarize(n = n(), sumtime = sum(stay, na.rm = TRUE)) %>%
+  group_by(type, day, hour) %>%
+  mutate(percnt = rank(n) / length(n)) %>%
+  ungroup()
+
+
+df_hr %>%
+  filter(type == "movement", percnt > .7) %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(size = 0.05*(sumtime/(2*pi)), color = day), pch = 1, alpha = .7,
+   data = filter(df_hr, type == "check-in", percnt > .7), show.legend = FALSE) +
+  geom_point(aes(color = n), size = .01, show.legend = FALSE) +
+  #scale_color_brewer(type = "qual", palette = "Dark2") +
+  facet_grid(day~hour) +
+  coord_equal() +
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = "black"),
+    strip.text = element_blank(),
+    plot.background = element_rect(fill = "black"),
+    panel.spacing = unit(0, "cm")
+  )
+
+ggsave("nactions2.png", height = 4, width = 12, dpi = 600)
+```
+
+
+```{r fig.height = 10, fig.width = 10}
+df_smp <- df %>%
+  filter(id %in% smp_ids)
+
+
+
+df_smp %>%
+  filter(type == "check-in") %>%
+  ggplot(aes(x = timestamp, y = as.factor(id))) +
+  geom_point() +
+  facet_wrap(~day, scale = "free_x")
+
+
+df_one <- filter(df_smp, id %in% smp_ids[1:30]) 
+
+df_one %>%
+  filter(type == "movement") %>%
+  ggplot(aes(x,y, group = id, color = hour)) +
+  scale_color_distiller(type = "seq") +
+  geom_path(show.legend = FALSE, alpha = .7) +
+  facet_wrap(~as.factor(id)) +
+  geom_point(data = filter(df_one, type == "check-in"), 
+             color = "hotpink", alpha = .5) +
+  coord_equal() +
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = "black"),
+    strip.text = element_blank(),
+    plot.background = element_rect(fill = "black"),
+    panel.spacing = unit(0, "cm")
+  )
+
+ggsave("paths.png", height = 5, width = 10)
+```
+
+
+ 
