@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href='http://fonts.googleapis.com/css?family=Oswald|Lato|Merriweather' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <title>A Walk in the Park</title>
+  <script src="d3.js" charset="utf-8"></script>
+  <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+</head>
+<body>
+
+<div class = "content">
+<div  class = "row"  style = "margin-bottom: 20px;">
+  <h1>A Walk in The Park</h1> 
+  <span class = "bodyText">
+    "The Park" is an amusement park with lots of different attractions. 
+    Here we see the visitor movements during one fateful weekend in June.
+    To the shock of everyone, a terrible crime happened on Sunday morning in Creighton Pavilion. 
+    Can we see it? What happened in the park afterwards?
+  </span>
+</div>
+
+  <div class = "row", style = "white-space : nowrap;">
+    <div style="display: inline-block; width: 1000px; white-space: normal; vertical-align: top;">
+      <h2>Number of Visitors</h2>
+      <span class = "infoText">
+        <strong style="color:#333">Total</strong> number of visitors, and visitors at <span class = "focusLocName"></span>. 
+        Brush to select time window for other plots.
+      </span>
+    </div>
+    <div style="display: inline-block; width: 300px; white-space: normal; vertical-align: top; margin-left: 50px;">
+      <h2>Visitor Location in Park</h2>
+      <span class = "infoText">
+        Squares show number of unique visitors in each position in The Park during the selected timeframe.
+        circles indicate the position of the checkin locations.
+      </span> 
+    </div>
+  </div>
+
+  <div class = "row" style = "white-space : nowrap;">
+    <div style="display: inline-block; width: 1000px; white-space: normal; vertical-align: top;">
+      <div id = "contextVis"></div> 
+    </div>
+    <div style="display: inline-block; width: 300px; white-space: normal; vertical-align: top; margin-left: 50px;">
+      <div id = "locationVis"></div> 
+    </div>
+  </div>
+
+<div class = "row">
+  <h2>
+    Visitor Flow at <span class = "focusLocName"></span> from 
+    <span id = "rangeStart"></span> to <span id = "rangeEnd">h</span>
+  </h2>
+  <span class = "infoText">
+    The locations are sorted by distance from the selected location from left to right. 
+    Click them to change focus. Hover to show connections. Click bars in center to show secondary stats. 
+    Data is aggregated per <strong>1 hour interval</strong>. (Tip: Resolution increases when smaller window is 
+    selected.)
+  </span>
+  <div id = "flowVis"></div> 
+</div>
+</div>
+
+<script type="text/javascript" src="contextVis.js"></script>	
+<script type="text/javascript" src="flowVis.js"></script>	
+<script type="text/javascript" src="locationVis.js"></script>	
+<script type="text/javascript" src="main.js"></script>	
+</body>
+</html>

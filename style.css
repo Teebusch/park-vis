@@ -1,0 +1,165 @@
+body {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+div.content {
+  max-width: 1500px;
+  margin: auto;
+}
+
+div.row {
+  max-width: 1400px;
+}
+
+h1 {
+  font-family: 'Merriweather', sans-serif;
+  font-size: 30pt;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+h2 {
+  font-family: 'Merriweather', sans-serif;
+  font-size: 18pt;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 5px;
+  color: #222;
+}
+
+.bodyText {
+  font-family: 'Lato', sans-serif;
+  font-size: 16pt;
+  color: #777;
+}
+
+.infoText {
+  font-family: 'Lato', sans-serif;
+  font-size: 12pt;
+  color: #777;
+}
+
+.infoText > strong {
+  color: #555;
+}
+
+.focusLocName {
+  font-weight: 900;
+  color: #e8ae27;
+}
+
+.locCircleBg {
+  fill: white;
+  cursor: pointer;
+  stroke-width: 0px;
+}
+
+.locCircleBg.highlight {
+  stroke-width: 2px;
+}
+
+.locCircleFg {
+  fill: #333;
+  cursor: pointer;
+}
+
+.timeBarTop, .timeBarBottom {
+  fill: #ccc;
+  fill-opacity: 1;
+  cursor: pointer
+}
+
+.flowLine {
+  fill: none;
+  visibility: hidden; 
+  stroke: #ccc;
+  stroke-opacity: 0.05;
+}
+
+.flowLine.highlight {
+  visibility: visible;
+  stroke-opacity: 0.6;
+}
+
+.locLabel {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12pt;
+  text-anchor: start;
+  alignment-baseline: central;
+  fill: #ccc;
+  cursor: pointer;
+}
+
+.locLabel.highlight {
+  font-weight: 500;
+  fill: black;
+}
+
+.locLabel.focus {
+  font-size: 14pt;
+  fill: #e8ae27;
+}
+
+.locLabel.focus.highlight {
+  font-weight: 500;
+  fill: #b4881f;
+}
+
+.tooltip {
+  position: absolute;
+  padding: 2px;
+  rx: 5;
+  ry: 5;
+  fill-opacity: .9;
+  background: #333;
+  stroke: 0px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.tooltiptext {
+  font-family: 'Lato', sans-serif;
+  fill: white;
+  font-size: 12;
+  pointer-events: none;
+}
+
+.contextTotal {
+  fill: none;
+  stroke: #333;
+  stroke-width: 3;
+}
+
+
+.contextFocus {
+  fill: none;
+  stroke: #e8ae27;
+  stroke-width: 3;
+}
+
+.mapCircle {
+  fill-opacity: .9;
+  stroke: none;
+}
+
+.mapCircle.focus {
+  fill: #e8ae27;
+  r: 12;
+  pointer-events: none;
+}
+
+.yaxisFocus path {
+  stroke: #e8ae27;
+}
+
+.yaxisFocus line {
+  stroke: #e8ae27;
+}
+.yaxisFocus text {
+  fill: #e8ae27;
+}

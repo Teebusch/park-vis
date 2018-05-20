@@ -1,0 +1,44 @@
+locId,label,category,x,y
+1,Wrightiraptor Mountain,Thrill Rides,47,11
+2,Galactosaurus Rage,Thrill Rides,27,15
+3,Auvilotops Express,Thrill Rides,38,90
+4,TerrorSaur,Thrill Rides,78,48
+5,Wendisaurus Chase,Thrill Rides,16,66
+6,Keimosaurus Big Spin,Thrill Rides,86,44
+7,Firefall,Thrill Rides,17,43
+8,Atmosfear,Thrill Rides,45,24
+9,North Line,Kiddie Rides,92,81
+10,Jeredactyl Jump,Kiddie Rides,81,77
+11,Sauroma Bumpers,Kiddie Rides,73,79
+12,Flying TyrAndrienkos,Kiddie Rides,73,84
+13,Cyndisaurus Asteroid,Kiddie Rides,79,87
+14,Beelzebufo,Kiddie Rides,76,88
+15,Enchanted Toadstools,Kiddie Rides,79,89
+16,Stegocycles,Kiddie Rides,82,80
+17,Blue Iguanodon,Kiddie Rides,83,88
+18,Wild Jungle Cruise,Kiddie Rides,85,86
+19,Stone Cups,Kiddie Rides,87,81
+20,Scholtz Express,Rides for Everyone,6,43
+21,Paleocarrie Carousel,Rides for Everyone,34,68
+22,Jurassic Road,Rides for Everyone,17,67
+23,Rhynasaurus Rampage,Rides for Everyone,16,49
+24,Kaufs Lost Canyon Escape,Rides for Everyone,43,56
+25,Maiasaur Madness,Rides for Everyone,26,59
+26,Kristanodon Kaper,Rides for Everyone,28,66
+27,Squidosaur,Rides for Everyone,48,87
+28,Eberlesaurus Roundup,Rides for Everyone,23,54
+29,Dykesadactyl Thrill,Rides for Everyone,87,48
+30,Ichthyoroberts Rapids,Rides for Everyone,78,37
+31,Raptor Race,Rides for Everyone,43,78
+32,Creighton Pavilion,Shows & Entertainment,32,33
+62,Liggement Fix-Me-Up,Other,50,57
+63,Grinosaurus Stage,Shows & Entertainment,76,22
+64,SabreTooth Theatre,Shows & Entertainment,87,63
+81,Flight of the Swingodon,Thrill Rides,69,44
+EN,Entrance North,Other,63,99
+EW,Entrance West,Other,0,67
+EE,Entrance East,Other,99,77
+30a,Watching Rapids I,Other,42,37
+30b,Watching Rapids II,Other,60,37
+30c,Watching Rapids III,Other,67,37
+OP,Outside of Park,Other,NA,NA
