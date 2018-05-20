@@ -12,9 +12,9 @@ locations <- read_rds("data/checkin_locs.RDS")
 # checkout: timestamp of next registered movement
 # duration: duration of stay
 # prev_checkin_id: The previous registered check-in location of that 
-#   visitor (0 if jsut entering park)
+#   visitor (OP if just entering park)
 # next_checkin_id: The next registered check-in location of that user 
-#  (99 if leaving park)
+#  (OP if outside park)
 checkins <- df %>%
   group_by(day, id) %>%
   #arrange(timestamp) %>% # not necessary, df is already sorted like this
@@ -24,8 +24,8 @@ checkins <- df %>%
   mutate(duration = minutes_between(checkin, checkout)) %>% 
   left_join(locations, by = c("checkin_id", "x", "y")) %>%
   mutate(
-    prev_checkin_id = lag(checkin_id, default = "0"),
-    next_checkin_id = lead(checkin_id, default = "99")
+    prev_checkin_id = lag(checkin_id, default = "OP"),
+    next_checkin_id = lead(checkin_id, default = "OP")
   ) %>%
   ungroup()
 

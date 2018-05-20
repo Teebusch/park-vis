@@ -24,9 +24,10 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 plots/*
-data/G0R72A/*
-data/park_data.RDS
-data/checkins.RDS
-data/timebins.RDS
+G0R72A/*
+park_data.RDS
+checkins.RDS
+timebins*.RDS
+checkin_locs.RDS
 README.html
 *.nb.html
