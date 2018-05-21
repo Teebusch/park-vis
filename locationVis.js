@@ -68,7 +68,7 @@ LocationVis.prototype.draw = function() {
 LocationVis.prototype.update = function(xyData, focusLoc, timeRange) {
   this.xyData = xyData;
 
-  // this.heatmapScale.domain([0, d3.max(this.xyData, d => d.n)]);
+  this.heatmapScale.domain([0, d3.max(this.xyData, d => d.n)]);
 
   this.focusLoc = focusLoc;
   this.timeRange = timeRange;

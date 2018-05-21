@@ -1,25 +1,21 @@
 todo:
 -----
-make entire areas hoverable (bars, circles+labels)
 change bucket size when zoomed in
-context plot axis labels tick labels
-barplot in center: time left and right, axis and labels
-small multiples on right
-problem when OP is Focus
-map of visitor locations aggregate properly
-bug in center bars when changing focus
-small gap for times when park is closed
-xpos sort options: name, in/out count, type, [distance]
-properly update remaining description text.
 legends for heatmaps and circle size
+update description text
 
 details:
 --------
+gap for times when park is closed
+make entire areas hoverable (bars, circles+labels)
 stop interrupting animation in the middle of it
+bug in center bars when changing focus
 
 optional:
 ---------
+xpos sort options: name, in/out count, type, [distance]
+barplot in center with axis and labels (or remove)
+small multiples on side
 button to show diffrent days
-links to show interesting things
+links to show interesting events (timerange + locId)
 annotate where and when crime happens
-make context area stacked by "area"

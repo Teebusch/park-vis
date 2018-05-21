@@ -56,14 +56,28 @@ ParkVis.prototype.filterData = function() {
   var xyData      = this.data.xyData;
 
   xyData = xyData.filter(
-    e => //e.timeBin >= _this.timeRange[0] &
-         //e.timeBin <= _this.timeRange[1] &
-         e.timeBin == _this.timeRange[0]
+    e => e.timeBin >= _this.timeRange[0] &
+         e.timeBin <= _this.timeRange[1]
+         //e.timeBin == _this.timeRange[0]
     );
   
-  // todo: aggregate
+  // aggregate all xy data in timeframe
+  xyData = d3.nest()
+    .key(function(d) { return d.x; })
+    .key(function(d) { return d.y; })
+    .rollup(d => d3.sum(d, e => e.n))
+    .entries(xyData)
 
-  
+  var tmp = []
+  xyData = xyData
+  .forEach(function(x){
+    flat = x.values.forEach(function(y) {
+      tmp.push({x:x.key, y: y.key, n: y.value})
+    }) 
+  });
+
+  xyData = tmp;
+      
   visitorFlow = visitorFlow.filter(
     e => e.focusLoc == _this.focusLoc
          & (e.n > 0)
