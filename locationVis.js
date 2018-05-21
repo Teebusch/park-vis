@@ -8,7 +8,14 @@ var LocationVis = function(opts) {
   this.margin      = opts.margin;
   this.height      = opts.height - this.margin.top - this.margin.bottom;
   this.width       = opts.width - this.margin.left - this.margin.right;
-  this.onClickLoc  = opts.onClickLoc;
+  this.onClickLoc  = function(d) {
+    opts.onClickLoc(d);
+    // Todo: ugly hack. Do better
+    setTimeout(function() {
+      d3.selectAll(".flowLine").classed("highlight", true)
+      d3.selectAll(".locCircleBg").classed("highlight", true)
+    }, 700)
+  }
   
   this.draw();
 }
@@ -45,14 +52,16 @@ LocationVis.prototype.draw = function() {
   .attr("height", 25)
   .attr("transform", "translate(-65,0)")
   .attr("class", "tooltip")
+  .style("fill", "white")
   .style("opacity", 0.9);
   
   this.tooltip.append("text")
-    .attr("id", "line1")
-    .attr("transform", "translate(0,15)")
-    .attr("class", "tooltiptext")
-    .style("text-anchor", "middle")
-    .style("font-size", 11)
+  .attr("id", "line1")
+  .attr("transform", "translate(0,15)")
+  .attr("class", "tooltiptext")
+  .style("text-anchor", "middle")
+  .style("fill", "black")
+  .style("font-size", 11)
 }
 
 
@@ -79,7 +88,6 @@ LocationVis.prototype.createScales = function() {
     .range([Math.min(this.width, this.height), 0]);
 
   this.heatmapScale = d3.scaleSequential(d3.interpolateMagma)
-    //.domain([0, 1000]);
     .domain([0, d3.max(this.xyData, d => d.n)]);
 
   this.catScale = d3.scaleOrdinal()
@@ -153,13 +161,14 @@ LocationVis.prototype.addHeatmap = function() {
   tiles
     .exit()
     .remove();
-    
+
   tiles
     .enter()
-      .append("circle")
-      .attr("r", 1)
-      .attr("cx", d => _this.xScale(d.x))
-      .attr("cy", d => _this.yScale(d.y))
+      .append("rect")
+      .attr("width", 3)
+      .attr("height", 3)
+      .attr("x", d => _this.xScale(+d.x))
+      .attr("y", d => _this.yScale(+d.y))
       .attr("class", "heatmapTile")
     .merge(tiles)
       .transition()

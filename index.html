@@ -7,6 +7,13 @@
   <title>A Walk in the Park</title>
   <script src="d3.js" charset="utf-8"></script>
   <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="theme-color" content="#0c1733">
 </head>
 <body>
 
@@ -14,10 +21,15 @@
 <div  class = "row"  style = "margin-bottom: 20px;">
   <h1>A Walk in The Park</h1> 
   <span class = "bodyText">
-    "The Park" is an amusement park with lots of different attractions. 
-    Here we see the visitor movements during one fateful weekend in June.
-    To the shock of everyone, a terrible crime happened on Sunday morning in Creighton Pavilion. 
-    Can we see it? What happened in the park afterwards?
+    "The Park" is an amusement park with different attractions &mdash;
+    <span style = "color: #e41a1c; font-weight: bold;">thrill rides</span>, 
+    <span style = "color: #377eb8; font-weight: bold;">rides for everyone</span>, 
+    <span style = "color: #4daf4a; font-weight: bold;">kiddie rides</span>, 
+    <span style = "color: #984ea3; font-weight: bold;">shows & entertainment</span> and 
+    <span style = "color: #555; font-weight: bold;">more</span>. 
+    This visualization shows the visitor's activity at those different attractions 
+     during one fateful weekend in June. To the shock of everyone, a terrible crime happened on 
+     Sunday morning in Creighton Pavilion. Can we see it? What happened in the park afterwards?
   </span>
 </div>
 
@@ -30,10 +42,9 @@
       </span>
     </div>
     <div style="display: inline-block; width: 300px; white-space: normal; vertical-align: top; margin-left: 50px;">
-      <h2>Visitor Location in Park</h2>
+      <h2>Visitor Location</h2>
       <span class = "infoText">
-        Squares show number of unique visitors in each position in The Park during the selected timeframe.
-        circles indicate the position of the checkin locations.
+        Heatmap shows number of unique visitors. Circles indicate attractions.
       </span> 
     </div>
   </div>
@@ -49,16 +60,24 @@
 
 <div class = "row">
   <h2>
-    Visitor Flow at <span class = "focusLocName"></span> from 
-    <span id = "rangeStart"></span> to <span id = "rangeEnd">h</span>
+    Visitor flow to and from <span class = "focusLocName"></span> between 
+    <span id = "rangeStart"></span> and <span id = "rangeEnd">h</span>
   </h2>
   <span class = "infoText">
-    The locations are sorted by distance from the selected location from left to right. 
-    Click them to change focus. Hover to show connections. Click bars in center to show secondary stats. 
-    Data is aggregated per <strong>1 hour interval</strong>. (Tip: Resolution increases when smaller window is 
-    selected.)
+    Circles show other attractions.
+    Heatmap in center shows total number of check-ins (top) and check-outs (bottom) by 
+    <strong>1 hour interval</strong>. 
+    (Tip: Resolution increases when smaller window is selected.)
+    Attractions are sorted by walking distance from the selected loation. 
+    Click other attractions to change focus. Hover attractions or time bins to filter connections. 
   </span>
   <div id = "flowVis"></div> 
+</div>
+
+<div class = "footer">
+  Icon "ferris wheel" made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a>
+  from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by 
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
 </div>
 </div>
 

@@ -16,7 +16,7 @@ var ParkVis = function(data) {
     dataTotal:  this.data.context,
     dataFocus:  this.data_flt.timeSlotsLocFlt,
     timeRange:  this.timeRange,
-    height:     300,
+    height:     330,
     width:      1000,
     margin:     {top: 30, right: 30, bottom: 30, left: 50},
     onBrush:    d => this.changeTimeRange(d)
@@ -28,9 +28,9 @@ var ParkVis = function(data) {
     xyData:     this.data_flt.xyData,
     focusLoc:   this.focusLoc,
     timeRange:  this.timeRange,
-    height:     300,
-    width:      300,
-    margin:     {top: 20, right: 20, bottom: 20, left: 20},
+    height:     330,
+    width:      330,
+    margin:     {top: 15, right: 15, bottom: 15, left: 15},
     onClickLoc: d => this.changeFocusLoc(d)
   });
   
@@ -39,7 +39,7 @@ var ParkVis = function(data) {
     data:       this.data_flt,
     focusLoc:   this.focusLoc,
     timeRange:  this.timeRange,
-    height:     850,
+    height:     1000,
     width:      1500,
     margin:     {top: 90, right: 90, bottom: 50, left: 30},
     onRefocus:  d => this.changeFocusLoc(d)
@@ -122,7 +122,6 @@ ParkVis.prototype.filterData = function() {
 
 
 ParkVis.prototype.changeFocusLoc = function(newFocusLoc) {
-  console.log(newFocusLoc)
 
   this.focusLoc = newFocusLoc;
   this.data_flt = this.filterData();
@@ -174,11 +173,16 @@ loadData = async function() {
   
   // run once on page load
 
-  var locs = await d3.csv("locations.csv");
+  var locs = await d3.csv("data/locations.csv");
 
-  var xyData = await d3.csv("xy.csv");
+  var xyData = await d3.csv("data/xy.csv", function(e) {
+    e.x = +e.x;
+    e.y = +e.y;
+    e.n = +e.n;
+    return e
+  });
 
-  var distmat = await d3.csv("distmat.csv", function(e) {
+  var distmat = await d3.csv("data/distmat.csv", function(e) {
     Object.keys(e).forEach(function(k) {
       if(k != "locId") {
         e[k] = +e[k]
@@ -187,15 +191,17 @@ loadData = async function() {
     return(e)
   });
 
-  var context = await d3.csv("context.csv", function(e) {
+  var context = await d3.csv("data/context.csv", function(e) {
     e.totalVisitors = + e.totalVisitors;
     e.timeBin = + e.timeBin;
+    e.startShort = formatTimeShort(d3.isoParse(e.start));
+    e.endShort = formatTimeShort(d3.isoParse(e.end));
     e.start = formatTime(d3.isoParse(e.start));
     e.end = formatTime(d3.isoParse(e.end));
     return(e)
   });
   
-  var timeSlots = await d3.json("timeSlots.json")
+  var timeSlots = await d3.json("data/timeSlots.json")
   
   timeSlots = timeSlots.map(function(e) {
     e.start = formatTimeShort(d3.isoParse(e.start + "Z")); // todo: fix in R
@@ -204,9 +210,9 @@ loadData = async function() {
     return(e)
   });
 
-  var visitorFlow = await d3.csv("flow.csv", function(e) {
-    e.time = + e.time;
-    e.n = + e.n;
+  var visitorFlow = await d3.csv("data/flow.csv", function(e) {
+    e.time = +e.time;
+    e.n = +e.n;
     return e
   });
   

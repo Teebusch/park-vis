@@ -6,8 +6,15 @@ var ContextVis = function(opts) {
   this.margin     = opts.margin;
   this.height     = opts.height - this.margin.top - this.margin.bottom;
   this.width      = opts.width - this.margin.left - this.margin.right;
-  this.onBrush    = opts.onBrush;
-  
+  this.onBrush    = function(d) {
+    opts.onBrush(d);
+    // Todo: ugly hack. Do better
+    setTimeout(function() {
+      d3.selectAll(".flowLine").classed("highlight", true)
+      d3.selectAll(".locCircleBg").classed("highlight", true)
+    }, 100)
+  }
+
   this.draw();
 }
 
@@ -32,16 +39,6 @@ ContextVis.prototype.createScales = function() {
   this.xScale = d3.scaleLinear()
     .domain([d3.min(this.dataTotal, d => d.timeBin), d3.max(this.dataTotal, d => d.timeBin)])
     .range([0, this.width]);
-
-  // this.xScale = d3.scalePoint()
-  //   .domain(
-  //     this.dataTotal.sort( 
-  //       function(a,b) {
-  //         return d3.ascending(a.timeBin, b.timeBin) 
-  //       })
-  //       .map(d => d.timeBin)
-  //     )
-  //   .range([0, this.width]);
 
   this.yScale = d3.scaleLinear()
     .domain([0, d3.max(this.dataTotal, d => d.totalVisitors)])
@@ -68,7 +65,9 @@ ContextVis.prototype.addAxes = function() {
   var _this = this;
 
   // axes
-  var xAxis  = d3.axisBottom(this.xScale);
+  var xAxis  = d3.axisBottom(this.xScale)
+    .tickFormat(d => _this.dataTotal.find(e => e.timeBin == d).startShort);
+
   var yAxis  = d3.axisLeft(this.yScale).ticks(4);
   var yAxis2 = d3.axisRight(this.yScaleFocus).ticks(4);
 
@@ -110,7 +109,7 @@ ContextVis.prototype.addAxes = function() {
 
   function brushended() {
     if (!d3.event.sourceEvent) return; // Only transition after input.
-    if (!d3.event.selection) return ; // Ignore empty selections.
+    if (!d3.event.selection) return _this.onBrush(_this.xScale.domain()) ;
 
     var d0 = d3.event.selection.map(_this.xScale.invert);
     var d1 = d0.map(d => Math.round(d));

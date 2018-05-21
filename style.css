@@ -14,6 +14,21 @@ div.row {
   max-width: 1400px;
 }
 
+div.footer {
+  margin-top: 100px;
+  font-size: 8pt;
+  color: #ddd;
+}
+
+div.footer a {
+  color: #bbb;
+  text-decoration: none;
+}
+
+div.footer a:hover {
+  text-decoration: underline;
+}
+
 h1 {
   font-family: 'Merriweather', sans-serif;
   font-size: 30pt;
@@ -49,6 +64,17 @@ h2 {
 }
 
 .focusLocName {
+  font-weight: bold;
+  color: #e8ae27;
+}
+
+.selection {
+  fill: #e8ae27;
+  stroke: none;
+  fill-opacity: 0.2;
+}
+
+#rangeStart,#rangeEnd {
   font-weight: 900;
   color: #e8ae27;
 }
@@ -66,24 +92,24 @@ h2 {
 .locCircleFg {
   fill: #333;
   cursor: pointer;
+  pointer-events: none;
 }
 
 .timeBarTop, .timeBarBottom {
   fill: #ccc;
   fill-opacity: 1;
-  cursor: pointer
+  pointer-events: all;
 }
 
 .flowLine {
   fill: none;
   visibility: hidden; 
-  stroke: #ccc;
-  stroke-opacity: 0.05;
+  stroke-opacity: 0;
 }
 
 .flowLine.highlight {
   visibility: visible;
-  stroke-opacity: 0.6;
+  stroke-opacity: 0.5;
 }
 
 .locLabel {
@@ -134,7 +160,6 @@ h2 {
   stroke: #333;
   stroke-width: 3;
 }
-
 
 .contextFocus {
   fill: none;

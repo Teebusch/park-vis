@@ -29,24 +29,18 @@ FlowVis.prototype.draw = function() {
   
   var svg = this.element.append('svg')
   .attr('width', this.width + this.margin.left + this.margin.right)
-  .attr('height', this.height + this.margin.top + this.margin.bottom);
+  .attr('height', this.height + this.margin.top + this.margin.bottom)
+  .on("mouseenter", function() {
+      d3.selectAll(".flowLine").classed("highlight", false)
+      d3.selectAll(".locCircleBg").classed("highlight", false)
+  })
+  .on("mouseleave", function() {
+      d3.selectAll(".flowLine").classed("highlight", true)
+      d3.selectAll(".locCircleBg").classed("highlight", true)
+  });
   
   this.plot = svg.append('g')
   .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-  
-  this.plot.append("rect")
-  .attr("width", this.width)
-  .attr("height", this.height)
-  .attr("fill", "white")
-  .on("mouseout", function(d) { 
-    d3.selectAll(".flowLine").classed("highlight", true)
-    d3.selectAll(".locCircleBg").classed("highlight", true)
-  })
-  .on("mouseenter", function(d) { 
-    d3.selectAll(".flowLine").classed("highlight", true)
-    d3.selectAll(".locCircleBg").classed("highlight", true)
-  })
-
 
   this.flow = this.plot.append("g")
   
@@ -80,6 +74,9 @@ FlowVis.prototype.draw = function() {
     .attr("id", "line2")
     .attr("transform", "translate(5,30)")
     .attr("class", "tooltiptext")
+
+    // todo: quick hack, implement better
+    this.showAllFlow()
 }
 
 
@@ -134,7 +131,7 @@ FlowVis.prototype.createScales = function() {
   this.barScaleStatBottom = d3.scaleLinear()
     .range([0, this.barHeightExp]);
 
-  this.heatMapScale = d3.scaleSequential(d3.interpolateViridis);
+  this.heatMapScale = d3.scaleSequential(d3.interpolateMagma);
 
   // generates lines to represent visitor flow
   this.linkGenerator = d3.linkVertical()
@@ -310,12 +307,26 @@ FlowVis.prototype.addLocCircles = function() {
       .duration(300)
       .attr("r", d => _this.locSizeScale(d.nFrom))
 
-    d3.selectAll(".locCirclePair")
-      .transition()
-      .delay(700)
-      .attr("pointer-events", "auto")
-
     this.addLocCircleInteraction();
+      
+      setTimeout(function() {
+        d3.selectAll(".locCirclePair")
+        .attr("pointer-events", "auto")
+        //_this.showAllFlow()
+      }, 700)
+      
+    }
+    
+    
+// todo: quick hack, implement more thoroughly
+FlowVis.prototype.showAllFlow = function() {
+  d3.selectAll(".flowLine").classed("highlight", true)
+  d3.selectAll(".locCircleBg").classed("highlight", true)
+}
+
+FlowVis.prototype.hideAllFlow = function() {
+  d3.selectAll(".flowLine").classed("highlight", false)
+  d3.selectAll(".locCircleBg").classed("highlight", false)
 }
 
 
@@ -379,7 +390,7 @@ FlowVis.prototype.addTimeBarInteraction = function() {
   _this = this;
 
   this.timeBars
-    .on("click", toggleBarExpansion)
+    //.on("click", toggleBarExpansion) # todo: disabled for submission, add axis and proper transition behavior
     .on("mouseout", hoverTimeBarOut)
     
     d3.selectAll(".timeBarTop, .timeBarBottom")
