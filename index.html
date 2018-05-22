@@ -11,6 +11,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="shortcut icon" type="image/png" href="favicon-16x16.png">
+  <link rel="shortcut icon" href="favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="msapplication-TileColor" content="#2b5797">
@@ -39,7 +40,8 @@
     <div style="display: inline-block; width: 1000px; white-space: normal; vertical-align: top;">
       <h2>Number of Visitors</h2>
       <span class = "infoText">
-        <strong style="color:#333">Total</strong> number of visitors, and visitors at <span class = "focusLocName"></span>. 
+        <strong style="color:#333">Total</strong> number of visitors, 
+        and visitors at <span class = "focusLocName">&hellip;</span> per 10 min interval. 
         Brush to select time window for other plots.
       </span>
     </div>
@@ -62,13 +64,13 @@
 
 <div class = "row">
   <h2>
-    Visitor flow to and from <span class = "focusLocName"></span> between 
-    <span id = "rangeStart"></span> and <span id = "rangeEnd">h</span>
+    Visitor flow to and from <span class = "focusLocName">&hellip;</span> between 
+    <span id = "rangeStart">...</span> and <span id = "rangeEnd">&hellip;</span>
   </h2>
   <span class = "infoText">
     Circles show other attractions.
     Heatmap in center shows total number of check-ins (top) and check-outs (bottom) by 
-    <strong>1 hour interval</strong>. 
+    <strong><span class = "timeInterval">60 min</span> interval</strong>. 
     (Tip: Resolution increases when smaller window is selected.)
     Attractions are sorted by walking distance from the selected loation. 
     Click other attractions to change focus. Hover attractions or time bins to filter connections. 

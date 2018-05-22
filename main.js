@@ -6,8 +6,8 @@ var ParkVis = function(data) {
   this.focusLoc  = "EN";
   
   this.data      = data;
-  this.timeRange = d3.extent(this.data.timeSlots.map(d => d.time));
-  this.data_flt  = this.filterData(this.data, this.focusLoc, this.timeRange);
+  this.timeRange = d3.extent(this.data.context.map(d => d.timeBinCtxt));
+  this.data_flt  = this.filterData("60 min");
         
   this.updateInfoText();
 
@@ -46,7 +46,7 @@ var ParkVis = function(data) {
   });  
 }
 
-ParkVis.prototype.filterData = function() {
+ParkVis.prototype.filterData = function(intvl) {
 
   _this = this;
 
@@ -55,10 +55,15 @@ ParkVis.prototype.filterData = function() {
   var locs        = this.data.locs;
   var xyData      = this.data.xyData;
 
+  // for overview
+  timeSlotsLocFlt = timeSlots.filter(
+    e => e.focusLoc == _this.focusLoc
+  )
+
+  // for map
   xyData = xyData.filter(
     e => e.timeBin >= _this.timeRange[0] &
          e.timeBin <= _this.timeRange[1]
-         //e.timeBin == _this.timeRange[0]
     );
   
   // aggregate all xy data in timeframe
@@ -75,24 +80,25 @@ ParkVis.prototype.filterData = function() {
       tmp.push({x:x.key, y: y.key, n: y.value})
     }) 
   });
-
   xyData = tmp;
       
+  // for detail
+
   visitorFlow = visitorFlow.filter(
     e => e.focusLoc == _this.focusLoc
-         & (e.n > 0)
-         & e.time >= _this.timeRange[0]
-         & e.time <= _this.timeRange[1]
-    );
+    & e.intvl == intvl
+    & (e.n > 0)
+    & e.timeBinCtxt >= _this.timeRange[0]
+    & e.timeBinCtxt <= _this.timeRange[1]
+  );
   
-  timeSlotsLocFlt = timeSlots.filter(
-    e => e.focusLoc == _this.focusLoc
-  )
-
   timeSlots = timeSlotsLocFlt.filter(
-    e => e.time >= _this.timeRange[0] &
-         e.time <= _this.timeRange[1]
+    e => e.intvl == intvl
+         & e.timeBinCtxt >= _this.timeRange[0]
+         & e.timeBinCtxt <= _this.timeRange[1]
     )
+
+
 
   var distances = this.data.distmat.find(e => e.locId == this.focusLoc)
 
@@ -127,7 +133,7 @@ ParkVis.prototype.filterData = function() {
 
   return {
     xyData: xyData,
-    timeSlotsLocFlt: timeSlotsLocFlt,
+    timeSlotsLocFlt: timeSlotsLocFlt.filter(d => d.intvl == "10 min"),
     timeSlots: timeSlots,
     visitorFlow: visitorFlow,
     locs: locs
@@ -138,7 +144,13 @@ ParkVis.prototype.filterData = function() {
 ParkVis.prototype.changeFocusLoc = function(newFocusLoc) {
 
   this.focusLoc = newFocusLoc;
-  this.data_flt = this.filterData();
+
+  if(this.timeRange[1] - this.timeRange[0] > 14) {
+    this.data_flt = this.filterData("60 min");
+  } else {
+    this.data_flt = this.filterData("10 min");
+  }
+
   this.contextVis.update(this.data_flt.timeSlotsLocFlt);
   this.flowVis.update(this.data_flt, this.focusLoc, this.timeRange);
   this.locationVis.update(this.data_flt.xyData, this.focusLoc, this.timeRange);
@@ -150,7 +162,12 @@ ParkVis.prototype.changeTimeRange = function(newTimeRange) {
   
   if (newTimeRange[0] != this.timeRange[0] | newTimeRange[1] != this.timeRange[1]) {
     this.timeRange = newTimeRange;
-    this.data_flt = this.filterData();
+
+  if(this.timeRange[1] - this.timeRange[0] > 14) {
+    this.data_flt = this.filterData("60 min");
+  } else {
+    this.data_flt = this.filterData("10 min");
+  }
 
     this.flowVis.update(this.data_flt, this.focusLoc, this.timeRange);
     this.locationVis.update(this.data_flt.xyData, this.focusLoc, this.timeRange);
@@ -164,11 +181,14 @@ ParkVis.prototype.updateInfoText = function() {
   var _this = this
 
   var focusLabel = this.data.locs.find(d => d.locId == _this.focusLoc).label;
+  var timeInterval = (this.timeRange[1] - this.timeRange[0] > 14) ? "1 hour" : "10 min";
 
-  var t1Label = this.data.context.find(d => d.timeBin == _this.timeRange[0]).start;
-  var t2Label = this.data.context.find(d => d.timeBin == _this.timeRange[1]).end;
+  var t1Label = this.data.context.find(d => d.timeBinCtxt == _this.timeRange[0]).start;
+  var t2Label = this.data.timeSlots
+    .find(d => d.intvl == "60 min" & d.timeBinCtxt == _this.timeRange[1]).end; 
 
   d3.selectAll(".focusLocName").text(focusLabel)    
+  d3.selectAll(".timeInterval").text(timeInterval)    
   d3.select("#rangeStart").text(t1Label)  
   d3.select("#rangeEnd").text(t2Label) 
 }
@@ -207,7 +227,8 @@ loadData = async function() {
 
   var context = await d3.csv("data/context.csv", function(e) {
     e.totalVisitors = + e.totalVisitors;
-    e.timeBin = + e.timeBin;
+    e.timeBin = +e.timeBin;
+    e.timeBinCtxt = +e.timeBinCtxt;
     e.startShort = formatTimeShort(d3.isoParse(e.start));
     e.endShort = formatTimeShort(d3.isoParse(e.end));
     e.start = formatTime(d3.isoParse(e.start));
@@ -221,12 +242,15 @@ loadData = async function() {
     e.start = formatTimeShort(d3.isoParse(e.start + "Z")); // todo: fix in R
     e.end = formatTimeShort(d3.isoParse(e.end + "Z"));
     e.timeBinLabel = e.start + " to" + e.end;
+    e.timeBinCtxt = +e.timeBinCtxt;
     return(e)
   });
 
   var visitorFlow = await d3.csv("data/flow.csv", function(e) {
     e.time = +e.time;
     e.n = +e.n;
+    e.timeBin = +e.timeBin;
+    e.timeBinCtxt = +e.timeBinCtxt;
     return e
   });
   

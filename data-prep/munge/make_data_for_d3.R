@@ -14,7 +14,6 @@ read_rds("data/checkin_locs.RDS") %>%
   write_csv("d3/locations.csv")
 
 
-
 locs <- read_csv("data/checkin_locs.csv") 
 
 df_checkins <- read_rds("data/checkins.RDS") %>%
@@ -81,7 +80,9 @@ make_timebin_df <- function(t1, t2, intvl) {
     )
 }
 
-timegrid <- make_timebin_df(t1, t2, "60 min")
+timegrid60 <- make_timebin_df(t1, t2, "60 min")
+timegrid10 <- make_timebin_df(t1, t2, "10 min")
+timegrid <- bind_rows(timegrid60, timegrid10)
 
 # ------------------ Make Flow -------------------------------------------------
 
@@ -96,36 +97,47 @@ add_timebin <- function(df, tdf) {
   return(df)
 }
 
-df <- add_timebin(df, timegrid) 
+df60 <- add_timebin(df, timegrid60) %>% mutate(intvl = "60 min")
+df10 <- add_timebin(df, timegrid10) %>% mutate(intvl = "10 min")
+
+df <- bind_rows(df60, df10)
+
+# add time bin foreign keys
+add_timebinCtxt <- function(df, tdf) {
+  df$timeBinCtxt = NA
+  pwalk(list(tdf$start, tdf$end, tdf$timeBin), 
+        function(t1, t2, b){
+          i = which(between(df$time, t1, t2))
+          df[i, "timeBinCtxt"] <<- b
+        })
+  return(df)
+}
+
+df <- add_timebinCtxt(df, timegrid60)
+df
 
 flow <- df %>% 
-  group_by(focusLoc, locId, direction, timeBin)  %>%
+  group_by(intvl, focusLoc, locId, direction, timeBin, timeBinCtxt)  %>%
   summarize(n = n()) %>%
   ungroup()
+
+
 
 locLabels <- locs %>% select(locId = checkin_id, category, name) %>%
   mutate(category = fct_collapse(category,
     Other = c("Other", "Entrance", "Information & Assistance")
   ))
 
-
-flow <- flow %>%
-  left_join(locLabels, by = "locId") %>% 
-  rename(time = timeBin)
-
-flow %>% distinct(locId, name, category) %>% arrange(category)
-
 flow %>%
+  left_join(locLabels, by = "locId") %>% 
+  rename(time = timeBin) %>%
   write_csv("d3/flow.csv")
-
-flow %>% filter(is.na(timeBin)) # empty, good!
-
 
 # ----------------- Summary Stats ---------------------------------------------
 
 # get median duration per focusloc, timeSlot
 summary_stats <- df %>% 
-  group_by(focusLoc, timeBin) %>%
+  group_by(intvl, focusLoc, timeBin) %>%
   summarize(medianDuration = median(duration, na.rm = T))
 
 # get total number of visitors checked-in per focusloc, timeSlot
@@ -133,9 +145,10 @@ df2 <- df_checkins %>%
   select(focusLoc = checkin_id, checkin, checkout)
 
 
-ff <- function(f, t1, t2) { 
+ff <- function(f, t1, t2, intvl) { 
   filter(df2,
          focusLoc == f,
+         intvl == intvl,
          ((t1 >= checkin & t1 < checkout) |
          (t2 >= checkin & t2 < checkout))
          ) %>%
@@ -143,33 +156,41 @@ ff <- function(f, t1, t2) {
 }
 
 summary_stats <- summary_stats %>% 
-  left_join(timegrid %>% select(start, end, timeBin), by = "timeBin") %>%
-  mutate(totalVisitors = pmap_dbl(list(focusLoc, start, end), ff)) %>%
+  left_join(timegrid %>% select(start, end, intvl, timeBin), 
+            by = c("intvl", "timeBin")) %>%
+  mutate(totalVisitors = pmap_dbl(list(focusLoc, start, end, intvl), ff)) %>%
   select(-start, -end)
 
-# TODO:
-# make context data from this by summing up timebins
+summary_stats
 
 # ---------------- Make TimeSlots ----------------------------------------------
 
 timeSlots <- flow %>% 
-  group_by(timeBin, focusLoc, direction) %>%
+  group_by(intvl, timeBin, focusLoc, direction) %>%
   nest()
 
-timeSlots <- expand.grid(
-    timeBin = timegrid$timeBin,
-    focusLoc = checkin_ids,
-    direction = c("to", "from")
-  ) %>%
-  as.tibble() %>%
-  left_join(timegrid, by = "timeBin") %>%
-  left_join(timeSlots, by = c("timeBin", "focusLoc", "direction")) %>% 
-  arrange(direction, focusLoc, timeBin)
+tg10 <- expand.grid(
+  intvl = "10 min",
+  timeBin = timegrid10$timeBin,
+  focusLoc = checkin_ids,
+  direction = c("to", "from")
+)
 
-timeSlots <- timeSlots %>%
+tg60 <- expand.grid(
+  intvl = "60 min",
+  timeBin = timegrid60$timeBin,
+  focusLoc = checkin_ids,
+  direction = c("to", "from")
+)
+
+tg <- as.tibble(bind_rows(tg10, tg60))
+
+timeSlots <- tg %>%
+  left_join(timegrid, by = c("intvl", "timeBin")) %>%
+  left_join(timeSlots, by = c("intvl", "timeBin", "focusLoc", "direction")) %>%
   spread(direction, data) %>%
   rename(nFrom = from, nTo = to) %>%
-  left_join(summary_stats, by = c("focusLoc", "timeBin"))
+  left_join(summary_stats, by = c("intvl", "focusLoc", "timeBin"))
 
 # add summary stats
 timeSlots <- timeSlots %>%
@@ -196,6 +217,20 @@ timeSlots <- timeSlots %>%
 
 timeSlots
 
+# add time bin foreign keys
+add_timebinCtxt <- function(df, tdf) {
+  df$timeBinCtxt = NA
+  pwalk(list(tdf$start, tdf$end, tdf$timeBin), 
+        function(t1, t2, b){
+          i = which(between(df$start, t1, t2))
+          df[i, "timeBinCtxt"] <<- b
+        })
+  return(df)
+}
+
+timeSlots <- add_timebinCtxt(timeSlots, timegrid60)
+View(timeSlots %>% select(intvl, timeBinCtxt, timeBin, everything()))
+
 # make nFrom and nTo nested named-lists rather than tibbles, for json export
 timeSlots$nFrom[1]
 
@@ -214,29 +249,28 @@ timeSlots %>%
 park_data <- read_rds("data/park_data.RDS")
 
 park_data
-timegrid
+timegrid10
 
 pd <- park_data %>%
   select(timestamp, id)
 
 ff <- function(t1, t2) { 
   print(paste(t1, t2))
-  
-  #park_data %>% filter
-  
   idx <- which(pd$timestamp >= t1 & pd$timestamp < t2)
   print(length(idx))
   
   res <- length(unique(pd[idx, ]$id))
-  
   print(res)
-  #pd <<- pd[-idx, ]
   
   return(res)
 }
 
-park_summary <- timegrid %>%
+park_summary <- timegrid10 %>%
   mutate(totalVisitors = map2_int(start, end, ff))
+
+park_summary <- add_timebinCtxt(park_summary, timegrid60)
+
+park_summary
 
 park_summary  %>% 
   write_csv("d3/context.csv")

@@ -1,12 +1,11 @@
 todo:
 -----
-change bucket size when zoomed in
 legends for heatmaps and circle size
-update description text
 
 details:
 --------
 gap for times when park is closed
+better line interpolation for context - smaller buckets?
 make entire areas hoverable (bars, circles+labels)
 stop interrupting animation in the middle of it
 bug in center bars when changing focus

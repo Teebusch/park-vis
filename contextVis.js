@@ -2,7 +2,7 @@ var ContextVis = function(opts) {
   
   this.element    = opts.element; // DOM element to append to
   this.dataTotal  = opts.dataTotal;
-  this.dataFocus  = opts.dataFocus;
+  this.dataFocus  = opts.dataFocus.filter(d => d.intvl == "10 min");
   this.margin     = opts.margin;
   this.height     = opts.height - this.margin.top - this.margin.bottom;
   this.width      = opts.width - this.margin.left - this.margin.right;
@@ -34,10 +34,35 @@ ContextVis.prototype.draw = function() {
   this.addAxes();
 }
 
+
+ContextVis.prototype.update = function(dataFocus) {
+
+  this.dataFocus = dataFocus.filter(d => d.intvl == "10 min");
+
+  this.yScaleFocus.domain([0, d3.max(this.dataFocus, d => d.stat1)])
+
+  d3.selectAll(".yaxisFocus")
+  .transition()
+  .duration(500)
+  .call(this.yAxis2)
+
+  this.plot.selectAll(".contextFocus")   // change the line
+  .datum(this.dataFocus)
+  .transition()
+  .duration(500)
+  .attr("d", this.lineFocus);
+}
+
+
 ContextVis.prototype.createScales = function() {
 
   this.xScale = d3.scaleLinear()
     .domain([d3.min(this.dataTotal, d => d.timeBin), d3.max(this.dataTotal, d => d.timeBin)])
+    .range([0, this.width]);
+
+  // only full hours can be brushed
+  this.xScaleCtxt = d3.scaleLinear()
+    .domain([d3.min(this.dataTotal, d => d.timeBinCtxt), d3.max(this.dataTotal, d => d.timeBinCtxt)])
     .range([0, this.width]);
 
   this.yScale = d3.scaleLinear()
@@ -65,11 +90,12 @@ ContextVis.prototype.addAxes = function() {
   var _this = this;
 
   // axes
-  var xAxis  = d3.axisBottom(this.xScale)
-    .tickFormat(d => _this.dataTotal.find(e => e.timeBin == d).startShort);
+  var xAxis  = d3.axisBottom(this.xScaleCtxt)
+    .ticks(14)
+    .tickFormat(d => _this.dataTotal.find(e => e.timeBinCtxt == d).startShort);
 
   var yAxis  = d3.axisLeft(this.yScale).ticks(4);
-  var yAxis2 = d3.axisRight(this.yScaleFocus).ticks(4);
+  this.yAxis2 = d3.axisRight(this.yScaleFocus).ticks(4);
 
   this.plot.append("g")
     .attr("class", "xaxis")
@@ -83,7 +109,7 @@ ContextVis.prototype.addAxes = function() {
   this.plot.append("g")
   .attr("class", "yaxisFocus")
   .attr("transform", "translate(" + this.width + ",0)")
-  .call(yAxis2)
+  .call(this.yAxis2)
   
   // brush
   var brush = d3.brushX()
@@ -95,7 +121,7 @@ ContextVis.prototype.addAxes = function() {
       if (!d3.event.sourceEvent) return; // Only transition after input.
       if (!d3.event.selection) return; // Ignore empty selections.
   
-      var d0 = d3.event.selection.map(_this.xScale.invert);
+      var d0 = d3.event.selection.map(_this.xScaleCtxt.invert);
       var d1 = d0.map(d => Math.round(d));
   
       // If empty when rounded, use floor & ceil instead.
@@ -111,7 +137,7 @@ ContextVis.prototype.addAxes = function() {
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return _this.onBrush(_this.xScale.domain()) ;
 
-    var d0 = d3.event.selection.map(_this.xScale.invert);
+    var d0 = d3.event.selection.map(_this.xScaleCtxt.invert);
     var d1 = d0.map(d => Math.round(d));
 
     // If empty when rounded, use floor & ceil instead.
@@ -123,7 +149,7 @@ ContextVis.prototype.addAxes = function() {
     // snap brush to rounded location
     d3.select(this)
       .transition()
-      .call(d3.event.target.move, d1.map(_this.xScale))
+      .call(d3.event.target.move, d1.map(_this.xScaleCtxt))
 
     _this.onBrush(d1)
   }
@@ -156,18 +182,4 @@ ContextVis.prototype.addFocus = function() {
     .datum(this.dataFocus)   
     .attr("class", "contextFocus")
     .attr("d", this.lineFocus)
-}
-
-
-ContextVis.prototype.update = function(dataFocus) {
-
-  this.dataFocus = dataFocus;
-
-  this.yScaleFocus.domain([0, d3.max(this.dataFocus, d => d.stat1)])
-
-  this.plot.selectAll(".contextFocus")   // change the line
-  .datum(this.dataFocus)
-  .transition()
-  .duration(500)
-  .attr("d", this.lineFocus);
 }
